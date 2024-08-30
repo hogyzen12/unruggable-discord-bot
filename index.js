@@ -15,11 +15,18 @@ function initializeKeypair() {
   }
 
   try {
-    const privateKey = Buffer.from(process.env.SOLANA_PRIVATE_KEY, 'hex');
+    let privateKey;
+    if (process.env.SOLANA_PRIVATE_KEY.startsWith('[') && process.env.SOLANA_PRIVATE_KEY.endsWith(']')) {
+      // Handle array format
+      privateKey = new Uint8Array(JSON.parse(process.env.SOLANA_PRIVATE_KEY));
+    } else {
+      // Handle hex string format
+      privateKey = Buffer.from(process.env.SOLANA_PRIVATE_KEY, 'hex');
+    }
     globalKeypair = Keypair.fromSecretKey(privateKey);
     console.log(`Loaded wallet. Public Key: ${globalKeypair.publicKey.toString()}`);
   } catch (error) {
-    console.error('Invalid private key format in .env file');
+    console.error('Invalid private key format in .env file', error);
     process.exit(1);
   }
 }
