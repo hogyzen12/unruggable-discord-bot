@@ -1,6 +1,9 @@
-require('dotenv').config();
-const { Client, GatewayIntentBits, Events, REST, Routes, SlashCommandBuilder } = require('discord.js');
-const { Keypair } = require('@solana/web3.js');
+import dotenv from 'dotenv';
+import { Client, GatewayIntentBits, Events, REST, Routes, SlashCommandBuilder } from 'discord.js';
+import { Keypair } from '@solana/web3.js';
+import bs58 from 'bs58';
+
+dotenv.config();
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
@@ -15,15 +18,8 @@ function initializeKeypair() {
   }
 
   try {
-    let privateKey;
-    if (process.env.SOLANA_PRIVATE_KEY.startsWith('[') && process.env.SOLANA_PRIVATE_KEY.endsWith(']')) {
-      // Handle array format
-      privateKey = new Uint8Array(JSON.parse(process.env.SOLANA_PRIVATE_KEY));
-    } else {
-      // Handle hex string format
-      privateKey = Buffer.from(process.env.SOLANA_PRIVATE_KEY, 'hex');
-    }
-    globalKeypair = Keypair.fromSecretKey(privateKey);
+    const privateKeyBase58 = process.env.SOLANA_PRIVATE_KEY;
+    globalKeypair = Keypair.fromSecretKey(bs58.decode(privateKeyBase58));
     console.log(`Loaded wallet. Public Key: ${globalKeypair.publicKey.toString()}`);
   } catch (error) {
     console.error('Invalid private key format in .env file', error);
@@ -33,7 +29,7 @@ function initializeKeypair() {
 
 client.once(Events.ClientReady, async () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  
+
   const commands = [
     new SlashCommandBuilder().setName('ping').setDescription('Check if the bot is responsive'),
     new SlashCommandBuilder().setName('showpubkey').setDescription('Show the current wallet\'s public key'),

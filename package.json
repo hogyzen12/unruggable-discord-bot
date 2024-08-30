@@ -1,18 +1,19 @@
 {
   "name": "unruggable-discord-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Discord bot for Solana interactions",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "engines": {
+    "node": "14.x"
+  },
   "dependencies": {
-    "@solana/web3.js": "^1.95.3",
-    "discord.js": "^14.15.3",
-    "dotenv": "^16.4.5"
+    "@solana/web3.js": "^1.73.0",
+    "bs58": "^5.0.0",
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.3"
   }
 }
